@@ -1,15 +1,14 @@
 
 
-# XXXXX: (fix ASAP!)
-# KEIRA: (main headers)
-# kkkkk: (sub-headers)
-# KKKKK: (sub sub-headers)
+# XXXXX:     (fix ASAP!)
+# KEIRA:     (main headers)
+# kkkkk:     (sub-headers)
+# KKKKK:     (sub sub-headers)
+# TODO:      (incomplete)
+# QUESTION:  (wtf did i just do)
 
-# TODO: (incomplete)
-# QUESTION: (wtf did i just do)
 
-
-# KEIRA: (Offsets) -----------------------------------------------------------------------------------------------------
+# KEIRA: (OFFSETs) -----------------------------------------------------------------------------------------------------
 
 chars_OFFSET = {
     "goldfish": 0x0000,
@@ -122,9 +121,9 @@ def byteArrayOf(hexValue):
 
 
 # keira:  (MAIN methods) -----------------------------------------------------------------------------------------------
+# kkkkk: Given thing_TYPE ("CHARACTER" / "STAT" / "ITEM") & its things_OFFSET, displays its menu.
 def displayMenu(thing_TYPE, things_OFFSET):
     num = 1
-    # KKKKK: (1) Display THINGS.
     print("----- (" + thing_TYPE.upper() + "S) --------------")
     name = ""
     for thing in things_OFFSET:
@@ -149,17 +148,25 @@ def getStat():
     return validate("STAT", stats_OFFSET)
 
 def getDec(char, thing, things_MAXVAL):
-    dec = 0
+    dec = -1
     max = things_MAXVAL[thing]
     while dec not in range(0, max+1):
         if char == "all" and thing == "all":
             dec = int(input("Enter a new value for " +
-                             thing.upper() + " STATS" + " for " + char.upper() + " CHARACTERS"
-                             " (1-" + str(max) + "): "))
+                             thing.upper() + " STATS for " + char.upper() + " CHARACTERS"
+                             " (0-" + str(max) + "): "))
+        elif char == "all":
+            dec = int(input("Enter a new value for " +
+                             thing.upper() + " for " + char.upper() + " CHARACTERS"
+                             " (0-" + str(max) + "): "))
+        elif thing == "all":
+            dec = int(input("Enter a new value for " +
+                             thing.upper() + " STATS for " + char.upper() +
+                             " (0-" + str(max) + "): "))
         else:
             dec = int(input("Enter a new value for " +
                             char.upper() + "'s " + thing.upper() +
-                            " (1-" + str(max) + "): "))
+                            " (0-" + str(max) + "): "))
     return dec
 
 def validate(thing_TYPE, things_OFFSET):
@@ -181,7 +188,6 @@ def validate(thing_TYPE, things_OFFSET):
 
 filename = 'SAVED.GAM'
 
-print(validate("CHARACTER", chars_OFFSET))
 print()
 print("\t 1. Change Stats \n" +
       "\t 2. Change Items \n")
@@ -192,8 +198,8 @@ if option == 1:
     char = getChar()
     stat = getStat()
     dec = getDec(char, stat, things_MAXVAL)
-    print(dec)
-    #setStat(char, stat, dec)
+
+
 if option == 2:
     print()
 
