@@ -1,11 +1,11 @@
 
 
-# XXXXX:     (fix ASAP!)
-# KEIRA:     (main headers)
-# kkkkk:     (sub-headers)
-# KKKKK:     (sub sub-headers)
-# TODO:      (incomplete)
-# QUESTION:  (wtf did i just do)
+# XXXXX:     (fix ASAP!)          (#c6001a)
+# KEIRA:     (main headers)       (#ff0070)
+# kkkkk:     (sub-headers)        (#fcb9c5)
+# KKKKK:     (sub sub-headers)    (#b97474)
+# TODO:      (incomplete)         (#ccff00)
+# QUESTION:  (wtf did i just do)  (#00b9ff)
 
 
 # KEIRA: (OFFSETs) -----------------------------------------------------------------------------------------------------
@@ -68,6 +68,21 @@ things_MAXVAL = {
 }
 
 # keira:  (SAVED.GAM methods) ------------------------------------------------------------------------------------------
+# kkkkk: Given offset & numOfBytes to read,
+#        moves pointer to the byte located at that offset,
+#        reads this byte & the following numOfBytes,
+#        & converts this array of bytes to dec.
+def readByte(file, offset):
+    return readBytes(file, offset, 1)
+
+def readBytes(file, offset, numOfBytes):
+    with open(file, 'rb') as file:
+        file.seek(offset, 1)  # set curr. position of pointer to offset.
+        # assert file.tell() == 0x000E
+        byte_array = file.read(numOfBytes)
+        return decOf(byte_array)
+
+# kkkkk: Given offset & dec, moves pointer to the byte located at that offset & changes its value to hexOf(dec).
 def setByte(file, offset, dec):
     byte_array = byteArrayOf(littleEndianOf(hexOf(dec)))
 
@@ -81,23 +96,24 @@ def setByte(file, offset, dec):
         # assert file.tell() == 0x000E
         file.write(byte_array)
 
-def setStat(char, stat, dec):
-    setByte(filename, chars_OFFSET[char] + stats_OFFSET[stat][0], dec)
+# kkkkk: Given char, stat & dec, sets stat of char to dec.
+def setStat(file, char, stat, dec):
+    setByte(file, chars_OFFSET[char] + stats_OFFSET[stat][0], dec)
 
-def setALLStats(file, char, stat, dec):
-    print("------- (" + char.upper() + ") --------------------------------")
-    for stat in stats_OFFSET:
-        dec = int(input("Enter in a value for " + stat.upper() + ": "))
-        setByte(file, chars_OFFSET[char] + stats_OFFSET[stat][0], dec)
-    print("--------------------------------------------------")
-
-def setALLStats4ALLChars(file, chars_OFFSET, stats_OFFSET):
+# kkkkk: Given dec, sets ALL stats of ALL chars to dec.
+def setStat4ALLChars(file, stat, dec):
     for char in chars_OFFSET:
-        print("------- (" + char.upper() + ") --------------------------------")
-        for stat in stats_OFFSET:
-            dec = int(input("Enter in a value for " + stat.upper() + ": "))
-            setByte(file, chars_OFFSET[char] + stats_OFFSET[stat][0], dec)
-        print("--------------------------------------------------")
+        setStat(file, char, stat, dec)
+
+# kkkkk: Given char & dec, sets ALL stats of char to dec.
+def setALLStats(file, char, dec):
+    for stat in stats_OFFSET:
+        setStat(file, char, stat, dec)
+
+# kkkkk: Given dec, sets ALL stats of ALL chars to dec.
+def setALLStats4ALLChars(file, dec):
+    for char in chars_OFFSET:
+        setALLStats(file, char, dec)
 
 # keira:  (CONVERSION methods) -----------------------------------------------------------------------------------------
 # kkkkk:  Given a DECIMAL value, returns its HEXADECIMAL value.
@@ -118,6 +134,9 @@ def littleEndianOf(bigEndian):
 # KKKKK: (NOTE: when writing to SAVED.GAM, hexValue must be a LITTLE-ENDIAN hexadecimal value.)
 def byteArrayOf(hexValue):
     return bytearray.fromhex(hexValue)
+
+def decOf(byteArray):
+    return int.from_bytes(byteArray, 'little')
 
 
 # keira:  (MAIN methods) -----------------------------------------------------------------------------------------------
@@ -173,7 +192,7 @@ def validate(thing_TYPE, things_OFFSET):
     selection = 0
     numOfOptions = len(things_OFFSET)+1
     while selection not in range(1, numOfOptions):
-        selection = int(input("Select a " + thing_TYPE.upper() + " to edit (1-" + str(numOfOptions) + "): "))
+        selection = int(input("Select a " + thing_TYPE.upper() + " (1-" + str(numOfOptions) + "): "))
         if selection == numOfOptions:
             break
     if selection == numOfOptions:
@@ -184,23 +203,68 @@ def validate(thing_TYPE, things_OFFSET):
             return thing
         pos += 1
 
+def displayChar(file, char):
+    if char == "all":
+        displayChars(file)
+    else:
+        print("----- (" + char.upper() + ") --------------")
+        for stat in stats_OFFSET:
+            if len(stats_OFFSET[stat]) == 2:
+                print("\t" + stat.upper() + ": " + str(readBytes(file, chars_OFFSET[char] + stats_OFFSET[stat][0], 2)))
+            else:
+                print("\t" + stat.upper() + ": " + str(readByte(file, chars_OFFSET[char] + stats_OFFSET[stat][0])))
+        print("-------------------------------")
+
+def displayChars(file):
+    for char in chars_OFFSET:
+        print("----- (" + char.upper() + ") --------------")
+        for stat in stats_OFFSET:
+            if len(stats_OFFSET[stat]) == 2:
+                print("\t" + stat.upper() + ": " + str(readBytes(file, chars_OFFSET[char] + stats_OFFSET[stat][0], 2)))
+            else:
+                print("\t" + stat.upper() + ": " + str(readByte(file, chars_OFFSET[char] + stats_OFFSET[stat][0])))
+        print("-------------------------------")
+
 # keira: (MAIN) ********************************************************************************************************
 
 filename = 'SAVED.GAM'
+char = "goldfish"
+run = True
 
-print()
-print("\t 1. Change Stats \n" +
-      "\t 2. Change Items \n")
-option = getOption(2)
-print()
-
-if option == 1:
-    char = getChar()
-    stat = getStat()
-    dec = getDec(char, stat, things_MAXVAL)
-
-
-if option == 2:
+while (run):
+    # start of program
     print()
+    displayChar(filename, char)
+
+    print()
+    print("\t 1. Change Stats \n" +
+          "\t 2. Change Items \n" +
+          "\t 3. View Diff. Character \n"
+          "\t 4. Exit \n")
+    option = getOption(4)
+    print()
+
+    if option == 1:
+        char = getChar()
+        stat = getStat()
+        dec = getDec(char, stat, things_MAXVAL)
+
+        if char == "all" and stat == "all":
+            setALLStats4ALLChars(filename, dec)
+        elif stat == "all":
+            setALLStats(filename, char, dec)
+        elif char == "all":
+            setStat4ALLChars(filename, stat, dec)
+        else:
+            setStat(filename, char, stat, dec)
+
+    elif option == 2:
+        print()
+
+    elif option == 3:
+        char = getChar()
+
+    elif option == 4:
+        run = False
 
 # keira:  (END OF MAIN) ************************************************************************************************
