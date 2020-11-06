@@ -9,39 +9,7 @@
 # QUESTION: (wtf did i just do)
 
 
-# KEIRA: (Offsets) **************
-
-# kkkkk:  (CHAR STATS)  ---------
-# Strength:     (0x000C)
-# Intelligence: (0x000D)
-# Dexterity:    (0x000E)
-# Magic:        (0x000F)
-# HP:           (0x0010) (0x0011)
-# HM:           (0x0012) (0x0013)
-# Experience:   (0x0014) (0x0015)
-# Gold:         (0x0204) (0x0205)
-
-# kkkkk: (CHAR STATS)
-# Strength:     (0x000E)
-# Intelligence: (0x000F)
-# Dexterity:    (0x0010)
-# Magic:        (0x0011)
-# HP:           (0x0012) (0x0013)
-# HM:           (0x0014) (0x0015)
-# Experience:   (0x0016) (0x0017)
-# Gold:         (0x0204) (0x0205)
-
-
-stats_OFFSET = {
-    "strength":     [0x000E],
-    "intelligence": [0x000F],
-    "dexterity":    [0x0010],
-    "magic":        [0x0011],
-    "hp":           [0x0012, 0x0013],
-    "hm":           [0x0014, 0x0015],
-    "experience":   [0x0016, 0x0017],
-    "gold":         [0x0204, 0x0205]
-}
+# KEIRA: (Offsets) -----------------------------------------------------------------------------------------------------
 
 chars_OFFSET = {
     "goldfish": 0x0000,
@@ -62,6 +30,43 @@ chars_OFFSET = {
     "Saduj":    0x01E0
 }
 
+stats_OFFSET = {
+    "strength":     [0x000E],
+    "intelligence": [0x000F],
+    "dexterity":    [0x0010],
+    "magic":        [0x0011],
+    "hp":           [0x0012, 0x0013],
+    "max hp":       [0x0014, 0x0015],
+    "experience":   [0x0016, 0x0017],
+    "gold":         [0x0204, 0x0205]
+}
+
+items_OFFSET = {
+    "keys":          [0x0000],
+    "skull keys":    [0x0000],
+    "gems":          [0x0000],
+    "black badge":   [0x0000],
+    "magic carpets": [0x0000],
+    "magic axes":    [0x0000]
+}
+
+things_MAXVAL = {
+    "strength":      99,
+    "intelligence":  99,
+    "dexterity":     99,
+    "magic":        255,
+    "hp":           999,
+    "max hp":       999,
+    "experience":  9999,
+    "gold":        9999,  # QUESTION: 32767?
+    "keys":          99,  # QUESTION: wants 100
+    "skull keys":    99,  # QUESTION: wants 100
+    "gems":          99,  # QUESTION: wants 100
+    "black badge":    1,  # QUESTION: 00, FF?
+    "magic carpets": 99,
+    "magic axes":    99,
+    "all":           99
+}
 
 # keira:  (SAVED.GAM methods) ------------------------------------------------------------------------------------------
 def setByte(file, offset, dec):
@@ -80,14 +85,14 @@ def setByte(file, offset, dec):
 def setStat(char, stat, dec):
     setByte(filename, chars_OFFSET[char] + stats_OFFSET[stat][0], dec)
 
-def setStats(file, char, stat, dec):
+def setALLStats(file, char, stat, dec):
     print("------- (" + char.upper() + ") --------------------------------")
     for stat in stats_OFFSET:
         dec = int(input("Enter in a value for " + stat.upper() + ": "))
         setByte(file, chars_OFFSET[char] + stats_OFFSET[stat][0], dec)
     print("--------------------------------------------------")
 
-def setStats4AllChars(file, chars_OFFSET, stats_OFFSET):
+def setALLStats4ALLChars(file, chars_OFFSET, stats_OFFSET):
     for char in chars_OFFSET:
         print("------- (" + char.upper() + ") --------------------------------")
         for stat in stats_OFFSET:
@@ -116,11 +121,80 @@ def byteArrayOf(hexValue):
     return bytearray.fromhex(hexValue)
 
 
+# keira:  (MAIN methods) -----------------------------------------------------------------------------------------------
+def displayMenu(thing_TYPE, things_OFFSET):
+    num = 1
+    # KKKKK: (1) Display THINGS.
+    print("----- (" + thing_TYPE.upper() + "S) --------------")
+    name = ""
+    for thing in things_OFFSET:
+        print("\t (" + str(num) + ") " + thing)
+        num += 1
+    print("\t (" + str(num) + ") ALL " + thing_TYPE.upper() + "S")
+    print("---------------------------------")
+
+def getOption(maxOptions):
+    option = 0
+    while option not in range(1, maxOptions+1):
+        option = int(input("Select an option "
+                           "(1-" + str(maxOptions) + "): "))
+    return option
+
+def getChar():
+    displayMenu("CHARACTER", chars_OFFSET)
+    return validate("CHARACTER", chars_OFFSET)
+
+def getStat():
+    displayMenu("STAT", stats_OFFSET)
+    return validate("STAT", stats_OFFSET)
+
+def getDec(char, thing, things_MAXVAL):
+    dec = 0
+    max = things_MAXVAL[thing]
+    while dec not in range(0, max+1):
+        if char == "all" and thing == "all":
+            dec = int(input("Enter a new value for " +
+                             thing.upper() + " STATS" + " for " + char.upper() + " CHARACTERS"
+                             " (1-" + str(max) + "): "))
+        else:
+            dec = int(input("Enter a new value for " +
+                            char.upper() + "'s " + thing.upper() +
+                            " (1-" + str(max) + "): "))
+    return dec
+
+def validate(thing_TYPE, things_OFFSET):
+    selection = 0
+    numOfOptions = len(things_OFFSET)+1
+    while selection not in range(1, numOfOptions):
+        selection = int(input("Select a " + thing_TYPE.upper() + " to edit (1-" + str(numOfOptions) + "): "))
+        if selection == numOfOptions:
+            break
+    if selection == numOfOptions:
+        return "all"
+    pos = 1
+    for thing in things_OFFSET:
+        if pos == selection:
+            return thing
+        pos += 1
+
 # keira: (MAIN) ********************************************************************************************************
 
 filename = 'SAVED.GAM'
 
-setStats4AllChars(filename, chars_OFFSET, stats_OFFSET)
+print(validate("CHARACTER", chars_OFFSET))
+print()
+print("\t 1. Change Stats \n" +
+      "\t 2. Change Items \n")
+option = getOption(2)
+print()
 
+if option == 1:
+    char = getChar()
+    stat = getStat()
+    dec = getDec(char, stat, things_MAXVAL)
+    print(dec)
+    #setStat(char, stat, dec)
+if option == 2:
+    print()
 
 # keira:  (END OF MAIN) ************************************************************************************************
