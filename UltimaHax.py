@@ -31,7 +31,7 @@
 # Gold:         (0x0204) (0x0205)
 
 
-offsets = {
+stats_OFFSET = {
     "strength":     [0x000E],
     "intelligence": [0x000F],
     "dexterity":    [0x0010],
@@ -42,16 +42,57 @@ offsets = {
     "gold":         [0x0204, 0x0205]
 }
 
+chars_OFFSET = {
+    "goldfish": 0x0000,
+    "Shamino":  0x0020,
+    "Iolo":     0x0040,
+    "Mariah":   0x0060,
+    "Geoffrey": 0x0080,
+    "Jaana":    0x00A0,
+    "Julia":    0x00C0,
+    "Dupre":    0x00E0,
+    "Katrina":  0x0100,
+    "Sentri":   0x0120,
+    "Gweno":    0x0140,
+    "Johne":    0x0160,
+    "Gorn":     0x0180,
+    "Maxwell":  0x01A0,
+    "Toshi":    0x01C0,
+    "Saduj":    0x01E0
+}
+
 
 # keira:  (SAVED.GAM methods) ------------------------------------------------------------------------------------------
 def setByte(file, offset, dec):
     byte_array = byteArrayOf(littleEndianOf(hexOf(dec)))
 
-    # 'rb': used to open & read file as a binary file, so that the bytes of the file won't be encoded when read
+    # 'r+b': used to...
+    #        - open & read file ('r')
+    #        - read file as a binary file, so that the bytes of the file won't be encoded when read ('b')
+    #        - overwrite data, rather than truncate the rest ('+')
+
     with open(file, 'r+b') as file:
         file.seek(offset)
         # assert file.tell() == 0x000E
         file.write(byte_array)
+
+def setStat(char, stat, dec):
+    setByte(filename, chars_OFFSET[char] + stats_OFFSET[stat][0], dec)
+
+def setStats(file, char, stat, dec):
+    print("------- (" + char.upper() + ") --------------------------------")
+    for stat in stats_OFFSET:
+        dec = int(input("Enter in a value for " + stat.upper() + ": "))
+        setByte(file, chars_OFFSET[char] + stats_OFFSET[stat][0], dec)
+    print("--------------------------------------------------")
+
+def setStats4AllChars(file, chars_OFFSET, stats_OFFSET):
+    for char in chars_OFFSET:
+        print("------- (" + char.upper() + ") --------------------------------")
+        for stat in stats_OFFSET:
+            dec = int(input("Enter in a value for " + stat.upper() + ": "))
+            setByte(file, chars_OFFSET[char] + stats_OFFSET[stat][0], dec)
+        print("--------------------------------------------------")
 
 # keira:  (CONVERSION methods) -----------------------------------------------------------------------------------------
 # kkkkk:  Given a DECIMAL value, returns its HEXADECIMAL value.
@@ -78,18 +119,7 @@ def byteArrayOf(hexValue):
 
 filename = 'SAVED.GAM'
 
-for x in offsets:
-    dec = int(input("Enter in a value for " + x + ": "))
-    setByte(filename, offsets[x][0], dec)
+setStats4AllChars(filename, chars_OFFSET, stats_OFFSET)
 
-dec = 999
-byte_array = byteArrayOf(littleEndianOf(hexOf(dec)))
-print(byte_array)
 
-# 'rb': used to open & read file as a binary file, so that the bytes of the file won't be encoded when read
-# with open(filename, 'r+b') as file:
-#     file.seek(offsets["hp"])
-#     # assert file.tell() == 0x000E
-#     file.write(byte_array)
-#
-# (END OF MAIN) ----------
+# keira:  (END OF MAIN) ************************************************************************************************
