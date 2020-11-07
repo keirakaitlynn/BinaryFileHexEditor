@@ -99,6 +99,8 @@ def setByte(file, offset, dec):
 # kkkkk: Given char, stat & dec, sets stat of char to dec.
 def setStat(file, char, stat, dec):
     setByte(file, chars_OFFSET[char] + stats_OFFSET[stat][0], dec)
+    if len(stats_OFFSET[stat]) == 2:
+        setByte(file, chars_OFFSET[char] + stats_OFFSET[stat][1], 0)
 
 # kkkkk: Given dec, sets ALL stats of ALL chars to dec.
 def setStat4ALLChars(file, stat, dec):
