@@ -97,11 +97,26 @@ def setByte(file, offset, dec):
         # assert file.tell() == 0x000E
         file.write(byte_array)
 
-# kkkkk: Given char, stat & dec, sets stat of char to dec.
+def setBytes(file, offset, dec):
+    byte_array = byteArrayOf(littleEndianOf(hexOf(dec)))
+    if len(byte_array) != 2:
+        byte_array.append(0)
+    # 'r+b': used to...
+    #        - open & read file ('r')
+    #        - read file as a binary file, so that the bytes of the file won't be encoded when read ('b')
+    #        - overwrite data, rather than truncate the rest ('+')
+
+    with open(file, 'r+b') as file:
+        file.seek(offset)
+        # assert file.tell() == 0x000E
+        file.write(byte_array)
+
+        # kkkkk: Given char, stat & dec, sets stat of char to dec.
 def setStat(file, char, stat, dec):
-    setByte(file, chars_OFFSET[char] + stats_OFFSET[stat][0], dec)
     if len(stats_OFFSET[stat]) == 2:
-        setByte(file, chars_OFFSET[char] + stats_OFFSET[stat][1], 0)
+        setBytes(file, chars_OFFSET[char] + stats_OFFSET[stat][0], dec)
+    else:
+        setByte(file, chars_OFFSET[char] + stats_OFFSET[stat][0], dec)
 
 # kkkkk: Given dec, sets ALL stats of ALL chars to dec.
 def setStat4ALLChars(file, stat, dec):
@@ -264,7 +279,7 @@ while (run):
             setStat(filename, char, stat, dec)
 
     elif option == 2:
-        print()
+        print() # TODO: Add CHANGE ITEMS functionality.
 
     elif option == 3:
         char = getChar()
