@@ -67,6 +67,7 @@ things_MAXVAL = {
     "all":           99
 }
 
+
 # keira:  (SAVED.GAM methods) ------------------------------------------------------------------------------------------
 # kkkkk: Given offset & numOfBytes to read,
 #        moves pointer to the byte located at that offset,
@@ -116,6 +117,7 @@ def setALLStats(file, char, dec):
 def setALLStats4ALLChars(file, dec):
     for char in chars_OFFSET:
         setALLStats(file, char, dec)
+
 
 # keira:  (CONVERSION methods) -----------------------------------------------------------------------------------------
 # kkkkk:  Given a DECIMAL value, returns its HEXADECIMAL value.
@@ -226,6 +228,7 @@ def displayChars(file):
             else:
                 print("\t" + stat.upper() + ": " + str(readByte(file, chars_OFFSET[char] + stats_OFFSET[stat][0])))
         print("-------------------------------")
+
 
 # keira: (MAIN) ********************************************************************************************************
 
