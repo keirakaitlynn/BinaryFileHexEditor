@@ -5,7 +5,7 @@
 # kkkkk:     (sub-headers)        (#fcb9c5)
 # KKKKK:     (sub sub-headers)    (#b97474)
 # TODO:      (incomplete)         (#ccff00)
-# QUESTION:  (wtf did i just do)  (#00b9ff)
+# QUESTION:  (review later)       (#00b9ff)
 
 
 # KEIRA: (OFFSETs) -----------------------------------------------------------------------------------------------------
@@ -37,10 +37,10 @@ stats_OFFSET = {
     "hp":           [0x0012, 0x0013],
     "max hp":       [0x0014, 0x0015],
     "experience":   [0x0016, 0x0017],
-    "gold":         [0x0204, 0x0205]
 }
 
 items_OFFSET = {
+    "gold":  [0x0204, 0x0205],
     "keys":          [0x0000],
     "skull keys":    [0x0000],
     "gems":          [0x0000],
@@ -57,11 +57,11 @@ things_MAXVAL = {
     "hp":           999,
     "max hp":       999,
     "experience":  9999,
-    "gold":        9999,  # QUESTION: 32767?
-    "keys":          99,  # QUESTION: wants 100
-    "skull keys":    99,  # QUESTION: wants 100
-    "gems":          99,  # QUESTION: wants 100
-    "black badge":    1,  # QUESTION: 00, FF?
+    "gold":        9999,  # QUESTION: (32767 = max?)
+    "keys":          99,  # QUESTION: (wants 100)
+    "skull keys":    99,  # QUESTION: (wants 100)
+    "gems":          99,  # QUESTION: (wants 100)
+    "black badge":    1,  # QUESTION: 00-FF (FF = max?)
     "magic carpets": 99,
     "magic axes":    99,
     "all":           99
