@@ -232,36 +232,31 @@ def displayChar(file, char):
 
 def displayChars(file):
     for char in chars_OFFSET:
-        print("----- (" + char.upper() + ") --------------")
-        for stat in stats_OFFSET:
-            if len(stats_OFFSET[stat]) == 2:
-                print("\t" + stat.upper() + ": " + str(readBytes(file, chars_OFFSET[char] + stats_OFFSET[stat][0], 2)))
-            else:
-                print("\t" + stat.upper() + ": " + str(readByte(file, chars_OFFSET[char] + stats_OFFSET[stat][0])))
-        print("-------------------------------")
+        displayChar(file, char)
 
 
 # keira: (MAIN) ********************************************************************************************************
 
 filename = 'SAVED.GAM'
-char = "goldfish"
+charToView = "goldfish"
 run = True
 
 while (run):
     # start of program
     print()
-    displayChar(filename, char)
+    displayChar(filename, charToView)
 
     print()
     print("\t 1. Change Stats \n" +
           "\t 2. Change Items \n" +
-          "\t 3. View Diff. Character \n"
+          "\t 3. View a Diff. Char's Stats \n"
           "\t 4. Exit \n")
     option = getOption(4)
     print()
 
     if option == 1:
         char = getChar()
+        displayChar(filename, char)
         stat = getStat()
         dec = getDec(char, stat, things_MAXVAL)
 
@@ -278,7 +273,7 @@ while (run):
         print() # TODO: Add CHANGE ITEMS functionality.
 
     elif option == 3:
-        char = getChar()
+        charToView = getChar()
 
     elif option == 4:
         run = False
