@@ -118,6 +118,13 @@ def setALLStats4ALLChars(file, dec):
     for char in chars_OFFSET:
         setALLStats(file, char, dec)
 
+def setItem(file, item, dec):
+    setBytes(file, items_OFFSET[item][0], dec)
+
+def setALLItems(file, dec):
+    for item in items_OFFSET:
+        setItem(file, item, dec)
+
 
 # keira:  (CONVERSION methods) -----------------------------------------------------------------------------------------
 # kkkkk:  Given a DECIMAL value, returns its HEXADECIMAL value.
@@ -170,6 +177,10 @@ def getStat():
     displayMenu("STAT", stats_OFFSET)
     return validate("STAT", stats_OFFSET)
 
+def getItem():
+    displayMenu("ITEM", items_OFFSET)
+    return validate("ITEM", items_OFFSET)
+
 def getDec(char, thing, things_MAXVAL):
     dec = -1
     max = things_MAXVAL[thing]
@@ -207,62 +218,91 @@ def validate(thing_TYPE, things_OFFSET):
             return thing
         pos += 1
 
-def displayChar(file, char):
+def displayThing(file, char, thing_TYPE, things_OFFSET):
+    header = thing_TYPE.upper() + "S"
+    char_OFFSET = 0
+    if char != "n/a":
+        header = char.upper()
+        char_OFFSET = chars_OFFSET[char]
+    print("----- (" + header + ") --------------")
+    for thing in things_OFFSET:
+        if len(things_OFFSET[thing]) == 2:
+            print("\t" + thing.upper() + ": " + str(readBytes(file, char_OFFSET + things_OFFSET[thing][0], 2)))
+        else:
+            print("\t" + thing.upper() + ": " + str(readByte(file, char_OFFSET + things_OFFSET[thing][0])))
+    print("-------------------------------")
+
+# "all" or "n/a": if char is "all", will print stats for each char (w/ char.upper() as header)
+#                 if char is "n/a", will just print a list of things (w/ thing.upper as header)
+# "thing" & "things_OFFSET": a stat or item & its corresponding list of OFFSETs
+def displayThings(file, char, thing_TYPE, things_OFFSET):
     if char == "all":
-        displayChars(file)
+        for char in chars_OFFSET:
+            displayThing(file, char, thing_TYPE, things_OFFSET)
     else:
-        print("----- (" + char.upper() + ") --------------")
-        for stat in stats_OFFSET:
-            if len(stats_OFFSET[stat]) == 2:
-                print("\t" + stat.upper() + ": " + str(readBytes(file, chars_OFFSET[char] + stats_OFFSET[stat][0], 2)))
-            else:
-                print("\t" + stat.upper() + ": " + str(readByte(file, chars_OFFSET[char] + stats_OFFSET[stat][0])))
-        print("-------------------------------")
+        displayThing(file, char, thing_TYPE, things_OFFSET)
+
+def displayItems(file):
+    displayThing(file, "n/a", "item", items_OFFSET)
+
+def displayChar(file, char):
+    displayThing(file, char, "stat", stats_OFFSET)
 
 def displayChars(file):
-    for char in chars_OFFSET:
-        displayChar(file, char)
+    displayThings(file, "all", "stat", stats_OFFSET)
 
 
 # keira: (MAIN) ********************************************************************************************************
 
-filename = 'SAVED.GAM'
-charToView = "goldfish"
+file = 'SAVED.GAM'
+char = "goldfish"
+item = "gold"
 run = True
 
 while (run):
     # start of program
     print()
-    displayChar(filename, charToView)
+    displayChar(file, char)
+    displayItems(file)
 
     print()
     print("\t 1. Change Stats \n" +
           "\t 2. Change Items \n" +
-          "\t 3. View a Diff. Char's Stats \n"
+          "\t 3. View a Diff. Char \n" +
           "\t 4. Exit \n")
     option = getOption(4)
     print()
 
     if option == 1:
         char = getChar()
-        displayChar(filename, char)
+        displayChar(file, char)
         stat = getStat()
         dec = getDec(char, stat, things_MAXVAL)
 
         if char == "all" and stat == "all":
-            setALLStats4ALLChars(filename, dec)
+            setALLStats4ALLChars(file, dec)
         elif stat == "all":
-            setALLStats(filename, char, dec)
+            setALLStats(file, char, dec)
         elif char == "all":
-            setStat4ALLChars(filename, stat, dec)
+            setStat4ALLChars(file, stat, dec)
         else:
-            setStat(filename, char, stat, dec)
+            setStat(file, char, stat, dec)
 
     elif option == 2:
-        print() # TODO: Add CHANGE ITEMS functionality.
+        # TODO: Add CHANGE ITEMS functionality.
+        displayItems(file)
+        item = getItem()
+        dec = getDec(char, item, things_MAXVAL)
+        print(item, dec)
+
+        if item == "all":
+            print("change ALL items to a given dec.")
+            setALLItems(file, dec)
+        else:
+            setItem(file, item, dec)
 
     elif option == 3:
-        charToView = getChar()
+        char = getChar()
 
     elif option == 4:
         run = False
