@@ -262,7 +262,10 @@ def displayItems(file):
     displayThing(file, "n/a", "item", items_OFFSET)
 
 def displayChar(file, char):
-    displayThing(file, char, "stat", stats_OFFSET)
+    if char == "all":
+        displayChars(file)
+    else:
+        displayThing(file, char, "stat", stats_OFFSET)
 
 def displayChars(file):
     displayThings(file, "all", "stat", stats_OFFSET)
@@ -309,7 +312,6 @@ while (run):
         displayItems(file)
         item = getItem()
         dec = getDec(char, item, things_MAXVAL)
-        print(item, dec)
 
         if item == "all":
             print("change ALL items to a given dec.")
