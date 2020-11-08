@@ -204,7 +204,15 @@ def getDec(char, thing, things_MAXVAL):
     dec = -1
     max = things_MAXVAL[thing]
     while dec not in range(0, max+1):
-        if char == "all" and thing == "all":
+        if char == "n/a" and thing == "all":
+            dec = int(input("Enter a new value for " +
+                             thing.upper() + " ITEMS" +
+                             " (0-" + str(max) + "): "))
+        elif char == "n/a":
+            dec = int(input("Enter a new value for " +
+                             thing.upper() + " " +
+                             " (0-" + str(max) + "): "))
+        elif char == "all" and thing == "all":
             dec = int(input("Enter a new value for " +
                              thing.upper() + " STATS for " + char.upper() + " CHARACTERS"
                              " (0-" + str(max) + "): "))
@@ -311,13 +319,11 @@ while (run):
             setStat(file, char, stat, dec)
 
     elif option == 2:
-        # TODO: Add CHANGE ITEMS functionality.
         displayItems(file)
         item = getItem()
-        dec = getDec(char, item, things_MAXVAL)
+        dec = getDec("n/a", item, things_MAXVAL)
 
         if item == "all":
-            print("change ALL items to a given dec.")
             setALLItems(file, dec)
         else:
             setItem(file, item, dec)
