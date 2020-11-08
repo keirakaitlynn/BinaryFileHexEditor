@@ -84,6 +84,19 @@ def readBytes(file, offset, numOfBytes):
         return decOf(byte_array)
 
 # kkkkk: Given offset & dec, moves pointer to the byte located at that offset & changes its value to hexOf(dec).
+def setByte(file, offset, dec):
+    byte_array = byteArrayOf(littleEndianOf(hexOf(dec)))
+
+    # 'r+b': used to...
+    #        - open & read file ('r')
+    #        - read file as a binary file, so that the bytes of the file won't be encoded when read ('b')
+    #        - overwrite data, rather than truncate the rest ('+')
+
+    with open(file, 'r+b') as file:
+        file.seek(offset)
+        # assert file.tell() == 0x000E
+        file.write(byte_array)
+
 def setBytes(file, offset, dec):
     byte_array = byteArrayOf(littleEndianOf(hexOf(dec)))
     if len(byte_array) != 2:
@@ -101,7 +114,10 @@ def setBytes(file, offset, dec):
 
 # kkkkk: Given char, stat & dec, sets stat of char to dec.
 def setStat(file, char, stat, dec):
-    setBytes(file, chars_OFFSET[char] + stats_OFFSET[stat][0], dec)
+    if len(stats_OFFSET[stat]) == 2:
+        setBytes(file, chars_OFFSET[char] + stats_OFFSET[stat][0], dec)
+    elif len(stats_OFFSET[stat]) == 1:
+        setByte(file, chars_OFFSET[char] + stats_OFFSET[stat][0], dec)
 
 # kkkkk: Given dec, sets ALL stats of ALL chars to dec.
 def setStat4ALLChars(file, stat, dec):
