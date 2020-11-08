@@ -135,7 +135,10 @@ def setALLStats4ALLChars(file, dec):
         setALLStats(file, char, dec)
 
 def setItem(file, item, dec):
-    setBytes(file, items_OFFSET[item][0], dec)
+    if len(items_OFFSET[item]) == 2:
+        setBytes(file, items_OFFSET[item][0], dec)
+    elif len(items_OFFSET[item]) == 1:
+        setByte(file, items_OFFSET[item][0], dec)
 
 def setALLItems(file, dec):
     for item in items_OFFSET:
