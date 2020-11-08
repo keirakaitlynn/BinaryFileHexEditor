@@ -61,7 +61,7 @@ things_MAXVAL = {
     "keys":          99,  # QUESTION: (wants 100)
     "skull keys":    99,  # QUESTION: (wants 100)
     "gems":          99,  # QUESTION: (wants 100)
-    "black badge":    1,  # QUESTION: 0x00-0xFF (-> 0-255?)
+    "black badge":  255,  # QUESTION: 0x00-0xFF (-> 0-255?)
     "magic carpets": 99,
     "magic axes":    99,
     "all":           99
@@ -84,8 +84,10 @@ def readBytes(file, offset, numOfBytes):
         return decOf(byte_array)
 
 # kkkkk: Given offset & dec, moves pointer to the byte located at that offset & changes its value to hexOf(dec).
-def setByte(file, offset, dec):
+def setBytes(file, offset, dec):
     byte_array = byteArrayOf(littleEndianOf(hexOf(dec)))
+    if len(byte_array) != 2:
+        byte_array.append(0)
 
     # 'r+b': used to...
     #        - open & read file ('r')
@@ -97,22 +99,9 @@ def setByte(file, offset, dec):
         # assert file.tell() == 0x000E
         file.write(byte_array)
 
-def setBytes(file, offset, dec):
-    byte_array = byteArrayOf(littleEndianOf(hexOf(dec)))
-    if len(byte_array) != 2:
-        byte_array.append(0)
-
-    with open(file, 'r+b') as file:
-        file.seek(offset)
-        # assert file.tell() == 0x000E
-        file.write(byte_array)
-
 # kkkkk: Given char, stat & dec, sets stat of char to dec.
 def setStat(file, char, stat, dec):
-    if len(stats_OFFSET[stat]) == 2:
-        setBytes(file, chars_OFFSET[char] + stats_OFFSET[stat][0], dec)
-    else:
-        setByte(file, chars_OFFSET[char] + stats_OFFSET[stat][0], dec)
+    setBytes(file, chars_OFFSET[char] + stats_OFFSET[stat][0], dec)
 
 # kkkkk: Given dec, sets ALL stats of ALL chars to dec.
 def setStat4ALLChars(file, stat, dec):
