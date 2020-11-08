@@ -41,12 +41,12 @@ stats_OFFSET = {
 
 items_OFFSET = {
     "gold":  [0x0204, 0x0205],
-    "keys":          [0x0000],
-    "skull keys":    [0x0000],
-    "gems":          [0x0000],
-    "black badge":   [0x0000],
-    "magic carpets": [0x0000],
-    "magic axes":    [0x0000]
+    "keys":          [0x0206],
+    "skull keys":    [0x020B], # QUESTION: (OFFSETs are not numerically ordered; seek(offset, 1) may be affected)
+    "gems":          [0x0207],
+    "black badge":   [0x0218],
+    "magic carpets": [0x020A],
+    "magic axes":    [0x0240]
 }
 
 things_MAXVAL = {
@@ -61,7 +61,7 @@ things_MAXVAL = {
     "keys":          99,  # QUESTION: (wants 100)
     "skull keys":    99,  # QUESTION: (wants 100)
     "gems":          99,  # QUESTION: (wants 100)
-    "black badge":    1,  # QUESTION: 00-FF (FF = max?)
+    "black badge":    1,  # QUESTION: 0x00-0xFF (-> 0-255?)
     "magic carpets": 99,
     "magic axes":    99,
     "all":           99
