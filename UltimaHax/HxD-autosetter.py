@@ -9,7 +9,7 @@ from pynput.keyboard import Key, Listener, Controller
 # KKKKK: (sub sub-headers)
 
 # TODO: (incomplete)
-# QUESTION: (wtf did i just do)
+# QUESTION: (wt* did i just do)
 
 
 # KEIRA: (Offsets) **************
@@ -28,7 +28,7 @@ from pynput.keyboard import Key, Listener, Controller
 # keira: (OS methods) --------------------------------------------------------------------------------------------------
 def openFile():
     try:
-        os.startfile('INIT.GAM')
+        os.startfile('SAVED.GAM')
     except Exception as e:
         print(str(e))
 
