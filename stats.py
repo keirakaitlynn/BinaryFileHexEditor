@@ -28,7 +28,7 @@ from pynput.keyboard import Key, Listener, Controller
 # keira: (OS methods) --------------------------------------------------------------------------------------------------
 def openFile():
     try:
-        os.startfile('SAVED.GAM')
+        os.startfile('INIT.GAM')
     except Exception as e:
         print(str(e))
 
@@ -109,7 +109,7 @@ def editSavedGAM():
     editALLCharStats()
     time.sleep(0.5)
     saveFile()
-    closeFile()
+    ##closeFile()
 
 
 # keira: (MAIN) ********************************************************************************************************

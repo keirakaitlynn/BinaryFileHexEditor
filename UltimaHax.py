@@ -42,7 +42,7 @@ stats_OFFSET = {
 items_OFFSET = {
     "gold":  [0x0204, 0x0205],
     "keys":          [0x0206],
-    "skull keys":    [0x020B], # QUESTION: (OFFSETs are not numerically ordered; seek(offset, 1) may be affected)
+    "skull keys":    [0x020B],
     "gems":          [0x0207],
     "black badge":   [0x0218],
     "magic carpets": [0x020A],
@@ -50,21 +50,25 @@ items_OFFSET = {
 }
 
 things_MAXVAL = {
-    "strength":      99,
-    "intelligence":  99,
-    "dexterity":     99,
-    "magic":        255,
-    "hp":           999,
-    "max hp":       999,
-    "experience":  9999,
-    "gold":        9999,  # QUESTION: (32767 = max?)
-    "keys":          99,  # QUESTION: (wants 100)
-    "skull keys":    99,  # QUESTION: (wants 100)
-    "gems":          99,  # QUESTION: (wants 100)
-    "black badge":  255,  # QUESTION: 0x00-0xFF (-> 0-255?)
-    "magic carpets": 99,
-    "magic axes":    99,
-    "all":           99
+    "strength":      255,
+    "intelligence":  255,
+    "dexterity":     255,
+    "magic":         255,
+    "hp":          65535,
+    "max hp":      65535,
+    "experience":  65535,
+
+    # FFFF (65535)  = max. dec val for 2 bytes
+    # FF   (255)    = max. dec val for 1 byte
+
+    "gold":        65535,
+    "keys":          255,
+    "skull keys":    255,
+    "gems":          255,
+    "black badge":   255,
+    "magic carpets": 255,
+    "magic axes":    255,
+    "all":           255
 }
 
 
@@ -254,9 +258,9 @@ def displayThing(file, char, thing_TYPE, things_OFFSET):
     print("----- (" + header + ") --------------")
     for thing in things_OFFSET:
         if len(things_OFFSET[thing]) == 2:
-            print("\t" + thing.upper() + ": " + str(readBytes(file, char_OFFSET + things_OFFSET[thing][0], 2)))
+            print("\t" + thing.lower() + ": " + str(readBytes(file, char_OFFSET + things_OFFSET[thing][0], 2)))
         else:
-            print("\t" + thing.upper() + ": " + str(readByte(file, char_OFFSET + things_OFFSET[thing][0])))
+            print("\t" + thing.lower() + ": " + str(readByte(file, char_OFFSET + things_OFFSET[thing][0])))
     print("-------------------------------")
 
 # "all" or "n/a": if char is "all", will print stats for each char (w/ char.upper() as header)
