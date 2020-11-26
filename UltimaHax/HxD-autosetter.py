@@ -28,7 +28,7 @@ from pynput.keyboard import Key, Listener, Controller
 # keira: (OS methods) --------------------------------------------------------------------------------------------------
 def openFile():
     try:
-        os.startfile('SAVED.GAM')
+        os.startfile('../SAVED.GAM')
     except Exception as e:
         print(str(e))
 
