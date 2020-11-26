@@ -1,5 +1,8 @@
 
 
+# this program must be placed in the same file as the SAVED.GAM to edit.
+
+
 # XXXXX:     (fix ASAP!)          (#c6001a)
 # KEIRA:     (main headers)       (#ff0070)
 # kkkkk:     (sub-headers)        (#fcb9c5)
@@ -11,7 +14,7 @@
 # KEIRA: (OFFSETs) -----------------------------------------------------------------------------------------------------
 
 chars_OFFSET = {
-    "goldfish": 0x0000,
+    "KEIRA": 0x0000,
     "Shamino":  0x0020,
     "Iolo":     0x0040,
     "Mariah":   0x0060,
@@ -44,7 +47,7 @@ items_OFFSET = {
     "keys":          [0x0206],
     "skull keys":    [0x020B],
     "gems":          [0x0207],
-    "black badge":   [0x0218],
+    "black badges":   [0x0218],
     "magic carpets": [0x020A],
     "magic axes":    [0x0240]
 }
@@ -65,7 +68,7 @@ things_MAXVAL = {
     "keys":          255,
     "skull keys":    255,
     "gems":          255,
-    "black badge":   255,
+    "black badges":   255,
     "magic carpets": 255,
     "magic axes":    255,
     "all":           255
@@ -249,6 +252,18 @@ def validate(thing_TYPE, things_OFFSET):
             return thing
         pos += 1
 
+def setDefaultValues(file):
+    setALLStats4ALLChars(file, 99)
+    setStat4ALLChars(file, "hp", 999)
+    setStat4ALLChars(file, "max hp", 999)
+    setStat4ALLChars(file, "experience", 9999)
+    setALLItems(file, 100)
+    setItem(file, "gold", 9999)
+    setItem(file, "black badges", 1)
+    setItem(file, "magic carpets", 2)
+    setItem(file, "magic axes", 10)
+    displayChars(file)
+
 def displayThing(file, char, thing_TYPE, things_OFFSET):
     header = thing_TYPE.upper() + "S"
     char_OFFSET = 0
@@ -289,7 +304,7 @@ def displayChars(file):
 # keira: (MAIN) ********************************************************************************************************
 
 file = 'SAVED.GAM'
-char = "goldfish"
+char = "KEIRA"
 item = "gold"
 run = True
 
@@ -303,8 +318,9 @@ while (run):
     print("\t 1. Change Stats \n" +
           "\t 2. Change Items \n" +
           "\t 3. View a Diff. Char \n" +
-          "\t 4. Exit \n")
-    option = getOption(4)
+          "\t 4. Set Default Values \n" +
+          "\t 5. Exit \n")
+    option = getOption(5)
     print()
 
     if option == 1:
@@ -336,6 +352,9 @@ while (run):
         char = getChar()
 
     elif option == 4:
+        setDefaultValues(file)
+
+    elif option == 5:
         run = False
 
 # keira:  (END OF MAIN) ************************************************************************************************
